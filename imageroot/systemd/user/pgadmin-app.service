@@ -10,9 +10,9 @@ After=postgresql.service pgadmin-app.service
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
-EnvironmentFile=%S/state/environment
-EnvironmentFile=-%S/state/smarthost.env
-WorkingDirectory=%S/state
+EnvironmentFile=%E/state/environment
+EnvironmentFile=-%E/state/smarthost.env
+WorkingDirectory=%E/state
 Restart=always
 TimeoutStopSec=70
 ExecStartPre=/bin/mkdir -p config
@@ -30,7 +30,7 @@ ExecStart=/usr/bin/podman run --conmon-pidfile %t/pgadmin-app.pid \
     --env 'PGADMIN_CONFIG_UPGRADE_CHECK_ENABLED=False' \
     --env 'PGADMIN_CONFIG_LOGIN_BANNER="Authorised users only!"' \
     --env 'PGADMIN_CONFIG_CONSOLE_LOG_LEVEL=40' \
-    --env-file=%S/state/smarthost.env \
+    --env-file=%E/state/smarthost.env \
     ${PGADMIN4_IMAGE}
 ExecStartPost=/usr/bin/bash -c "while ! podman exec pgadmin-app /venv/bin/python3 setup.py get-users ;  do sleep 5 ; done"
 ExecStartPost=/usr/bin/podman cp pgpass pgadmin-app:/var/lib/pgadmin/pgpass
